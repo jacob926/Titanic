@@ -2,3 +2,6 @@
 # Keep environment variables out of version control
 .venv
 Model.pkl
+__pycache__/
+*.pyc
+data/processed/database.db
