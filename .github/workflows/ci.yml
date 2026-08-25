@@ -30,4 +30,4 @@ jobs:
 
     - name: 5. Tester la construction de l'image Docker
       run: |
-        docker build -t titanic-api:test .
+        docker build -t titanic-api:test   . 

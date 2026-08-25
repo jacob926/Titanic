@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import joblib
+import os
 
 def train_model():
     print("📦 Lecture des données nettoyées depuis la base SQLite...")
@@ -29,9 +30,24 @@ def train_model():
     accuracy = accuracy_score(y_test, predictions)
     print(f"🎯 Précision du modèle : {accuracy * 100:.2f}%")
     
-    # Sauvegarde du modèle
-    joblib.dump(model, "Model.pkl")
-    print("💾 Modèle sauvegardé sous 'Model.pkl'")
+    # Sauvegarde locale du modèle à la racine du projet
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    model_path = os.path.join(BASE_DIR, "Model.pkl")
+    
+    joblib.dump(model, model_path)
+    print(f"💾 Modèle sauvegardé sous '{model_path}'")
 
+    # Upload automatique vers le cloud Hugging Face (intégré dans la fonction)
+    try:
+        try:
+            from upload_model import upload_model
+        except ModuleNotFoundError:
+            from src.upload_model import upload_model
+
+        upload_model()
+    except Exception as e:
+        print(f"⚠️ Erreur lors de l'upload : {e}")
+
+# Point d'entrée obligatoire pour déclencher l'exécution du script
 if __name__ == "__main__":
     train_model()

@@ -4,6 +4,7 @@ import joblib
 import pandas as pd
 from sqlalchemy import create_engine
 import os
+from huggingface_hub import hf_hub_download
 
 app = FastAPI(
     title="API de Prédiction - Data & MLOps Pipeline",
@@ -11,13 +12,18 @@ app = FastAPI(
     version="2.0.0"
 )
 
-# 1. Chargement du modèle entraîné
-MODEL_PATH = "Model.pkl"
-if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError("Le fichier Model.pkl est introuvable. Exécute d'abord src/train.py !")
+# Configuration du modèle distant sur Hugging Face
+REPO_ID = "jacob926/titanic-model"  # ⚠️ Remplace "jacob926" par ton nom d'utilisateur exact sur Hugging Face
+FILENAME = "Model.pkl"
 
-model = joblib.load(MODEL_PATH)
-
+print("📥 Chargement du modèle depuis Hugging Face...")
+try:
+    # Télécharge le fichier depuis Hugging Face et le met en cache localement
+    model_path = hf_hub_download(repo_id=REPO_ID, filename=FILENAME)
+    model = joblib.load(model_path)
+    print("✅ Modèle chargé avec succès depuis Hugging Face !")
+except Exception as e:
+    raise RuntimeError(f"Impossible de charger le modèle depuis Hugging Face: {e}")
 # Connexion à la base SQLite pour sauvegarder les prédictions
 DB_PATH = "sqlite:///data/processed/database.db"
 engine = create_engine(DB_PATH)

@@ -22,6 +22,8 @@ COPY . .
 
 # 7. Création explicite des dossiers de données s'ils n'existent pas
 RUN mkdir -p data/raw data/processed
+# Donner les droits d'exécution au script d'entrée
+RUN chmod +x entrypoint.sh
 
 # 8. Exposition du port de l'API FastAPI
 EXPOSE 8000
